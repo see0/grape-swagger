@@ -37,6 +37,9 @@ module GrapeSwagger
                           'double'
                         when 'Symbol'
                           'string'
+                        when /^\[(.*)\]$/
+                          items[:type] = $1
+                          'array'
                         else
                           @@documentation_class.parse_entity_name(raw_data_type)
                         end
