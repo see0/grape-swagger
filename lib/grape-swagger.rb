@@ -197,6 +197,9 @@ module Grape
                                   'double'
                                 when 'Symbol'
                                   'string'
+                                when /^\[(.*)\]$/
+                                  items[:type] = $1
+                                  'array'
                                 else
                                   @@documentation_class.parse_entity_name(raw_data_type)
                                 end
@@ -241,6 +244,10 @@ module Grape
                 parsed_params.merge!(format: 'int32') if data_type == 'integer'
                 parsed_params.merge!(format: 'int64') if data_type == 'long'
                 parsed_params.merge!(items: items) if items.present?
+                if data_type == 'array' && items.present?
+                  parsed_params[:allowMultiple] = true
+                  parsed_params[:paramType] = 'form'
+                end 
                 parsed_params.merge!(defaultValue: default_value) if default_value
                 parsed_params.merge!(enum: enum_values) if enum_values
                 parsed_params
